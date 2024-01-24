@@ -43,19 +43,28 @@ document.addEventListener('alpine:init', () => {
         showContentFile : false,
         myList : [],
         init() {
-            fetch('./affixes.json').then((response) => response.json()).then((json) => this.affixes = json);
-            fetch('./aspects.json').then((response) => response.json()).then((json) => this.aspects = json);
-            fetch('./itemtypes.json').then((response) => response.json()).then((json) => this.itemTypes = json);
+            this.fetchFiles();
             this.myList = this.getMyList();
             this.triggerSlimSelect();
-            //console.log(this.myList);
+            console.log(this.myList);
             //this.clearItems();
+        },
+        fetchFiles() {
+            fetch('./affixes.json').then((response) => response.json())
+                .then((json) => this.affixes = json).catch((error) => console.error(error));
+            fetch('./aspects.json').then((response) => response.json())
+                .then((json) => this.aspects = json).catch((error) => console.error(error));
+            fetch('./itemtypes.json').then((response) => response.json())
+                .then((json) => this.itemTypes = json).catch((error) => console.error(error));
         },
         getMyList() {
             let myList = localStorage.getItem('myList');
             if (myList) {
                 return JSON.parse(myList);
             }
+            return this.defaultList();
+        },
+        defaultList() {
             return {
                 affixes : [],
                 aspects : []
@@ -76,12 +85,12 @@ document.addEventListener('alpine:init', () => {
             this.saveList();
         },
         clearItems() {
-            this.myList = [];
+            this.myList = this.defaultList();
             this.saveList();
         },
         saveList() {
             localStorage.setItem('myList', JSON.stringify(this.myList));
-            console.log(this.myList);
+            //console.log(this.myList);
         },
         addNewItem() {
             let newItem = this.buildNewItem();
@@ -104,18 +113,18 @@ document.addEventListener('alpine:init', () => {
             key.classList.add('slimselect');
         },
         addAffix(key) {
-            this.myList[key].affixPools.push({
+            this.myList.affixes[key].affixPools.push({
                 affix: '',
                 value: ''
             });
             this.triggerSlimSelect();
         },
         removeAffix(key, affixKey) {
-            this.myList[key].affixPools.splice(affixKey, 1);
+            this.myList.affixes[key].affixPools.splice(affixKey, 1);
         },
         contentFile() {
             let content = "Affixes:\n";
-            for (const item of this.myList) {
+            for (const item of this.myList.affixes) {
                 content += "  - " + item.name + "\n";
                 content += "      ItemType: [" + item.itemType.join(', ') + "]\n";
                 content += "      minPower: " + item.minPower + "\n";
