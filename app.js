@@ -1,7 +1,36 @@
 let itemTypes = [],
     affixes = {},
     aspects = {};
-
+itemTypes = ['helm', 'chest armor', 'pants', 'gloves', 'boots', 'ring', 'amulet', 'axe', 'tow-handed axe', 'sword', 'two-handed sword', 'mace', 'two-handed mace', 'scythe', 'two-handed scythe', 'bow', 'bracers', 'crossbow', 'dagger', 'polarm', 'shield', 'staff', 'wand', 'offhand', 'totem'];
+affixes = {
+    "all_stats": "all stats",
+    "dexterity": "dexterity",
+    "energy_on_kill": "energy on kill",
+    "essence_on_kill": "essence on kill",
+    "fury_on_kill": "fury on kill"
+};
+aspects = {
+    "of_berserk_ripping": {
+        "desc": "whenever you deal direct damage while berserking, inflict of the base damage dealt as additional bleeding damage over seconds.",
+        "snoId": 1105985
+    },
+    "earthquake": {
+        "desc": "ground stomp creates an earthquake damaging enemies for physical damage over seconds. while standing in earthquakes, you deal increased damage.",
+        "snoId": 1105986
+    },
+    "skullbreakers": {
+        "desc": "stunning a bleeding enemy deals of their total bleeding amount to them as physical damage.",
+        "snoId": 1105987
+    },
+    "weapon_masters": {
+        "desc": "your weapon mastery skills have an additional charge. lucky hit damaging an enemy with a weapon mastery skill has up to a chance to stun them for seconds.",
+        "snoId": 1105988
+    },
+    "iron_blood": {
+        "desc": "gain damage reduction for each nearby bleeding enemy up to maximum.",
+        "snoId": 1105989
+    }
+};
 document.addEventListener('alpine:init', () => {
     Alpine.data('d4data', () => ({
         itemTypes : itemTypes,
