@@ -85,7 +85,7 @@ document.addEventListener('alpine:init', () => {
         },
         addNewItem() {
             let newItem = this.buildNewItem();
-            this.myList.push(newItem);
+            this.myList.affixes.push(newItem);
             this.saveList();
             this.triggerSlimSelect();
         },
