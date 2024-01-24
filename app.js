@@ -1,7 +1,7 @@
 let itemTypes = [],
     affixes = {},
     aspects = {};
-/*
+
 itemTypes = ['helm', 'chest armor', 'pants', 'gloves', 'boots', 'ring', 'amulet', 'axe', 'tow-handed axe', 'sword', 'two-handed sword', 'mace', 'two-handed mace', 'scythe', 'two-handed scythe', 'bow', 'bracers', 'crossbow', 'dagger', 'polarm', 'shield', 'staff', 'wand', 'offhand', 'totem'];
 affixes = {
     "all_stats": "all stats",
@@ -32,7 +32,7 @@ aspects = {
         "snoId": 1105989
     }
 };
-*/
+
 document.addEventListener('alpine:init', () => {
     Alpine.data('d4data', () => ({
         itemTypes : itemTypes,
@@ -81,7 +81,7 @@ document.addEventListener('alpine:init', () => {
             }
         },
         removeItem(key) {
-            this.myList.splice(key, 1);
+            this.myList.affixes.splice(key, 1);
             this.saveList();
         },
         clearItems() {
