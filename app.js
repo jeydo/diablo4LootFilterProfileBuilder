@@ -101,8 +101,8 @@ document.addEventListener('alpine:init', () => {
             if (this.myList.affixes.length) {
                 content += "Affixes:\n";
                 for (const item of this.myList.affixes) {
-                    content += "  - " + item.name + "\n";
-                    content += "      ItemType: [" + item.itemType.join(', ') + "]\n";
+                    content += "  - " + item.name + ":\n";
+                    content += "      itemType: [" + item.itemType.join(', ') + "]\n";
                     content += "      minPower: " + item.minPower + "\n";
                     content += "      affixPools:\n";
                     for (const affix of item.affixPools) {
