@@ -90,7 +90,6 @@ document.addEventListener('alpine:init', () => {
             this.saveList();
         },
         contentFile() {
-            return;
             let content = '';
             if (this.myList.aspects.length) {
                 content = "Aspects:\n";
