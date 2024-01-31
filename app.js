@@ -79,6 +79,7 @@ document.addEventListener('alpine:init', () => {
         },
         addAffix(key) {
             this.myList.affixes[key].affixPools.push({
+                id: new Date().getTime(),
                 affix: '',
                 value: ''
             });
@@ -89,6 +90,7 @@ document.addEventListener('alpine:init', () => {
             this.saveList();
         },
         contentFile() {
+            return;
             let content = '';
             if (this.myList.aspects.length) {
                 content = "Aspects:\n";

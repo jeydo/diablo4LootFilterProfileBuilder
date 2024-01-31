@@ -27,34 +27,34 @@
         <h4>Affixes :
             <button type="button" class="btn btn-sm" x-text="showAffixes ? '⏫' : '⏬'" @click="showAffixes = !showAffixes"></button>
         </h4>
-        <div class="row" x-show="showAffixes">
-            <p>
-                <button class="btn btn-primary" @click="addNewItem()">Add New Item</button>
-            </p>
-            <template x-for="(item, key) in myList.affixes" x-key="JSON.stringify(item)">
-                <div class="col-md-4 card">
-                    <div class="card-body">
+        <p x-show="showAffixes">
+            <button class="btn btn-primary" @click="addNewItem()">Add New Item</button>
+        </p>
+        <div class="row gy-2 gx-4" x-show="showAffixes">
+            <template x-for="(item, key) in myList.affixes" :key="item.id">
+                <div class="col-md-4">
+                    <div class="border border-primary-subtle p-2 rounded">
                         <div class="mb-1">
-                            <input type="text" x-model="item.name" class="form-control form-control-sm" placeholder="Name" @keyup="saveList">
+                            <input type="text" x-model="item.name" class="form-control form-control-sm border-info-subtle" placeholder="Name" @keyup="saveList">
                         </div>
                         <div class="mb-1">
-                            <select x-model="item.itemType" multiple placeholder="Choose one or several item type" @change="saveList">
+                            <select x-model="item.itemType" multiple placeholder="Choose one or several item type" @change="saveList" class="border-info-subtle">
                                 <template x-for="itemType in itemTypes">
                                     <option :value="itemType" x-text="itemType" :selected="item.itemType.indexOf(itemType) != -1"></option>
                                 </template>
                             </select>
                         </div>
                         <div class="mb-1">
-                            <input type="number" class="form-control form-control-sm" x-model="item.minPower" placeholder="Min Power" @change="saveList">
+                            <input type="number" class="form-control form-control-sm border-info-subtle" x-model="item.minPower" placeholder="Min Power" @change="saveList">
                         </div>
-                        <template x-for="(affix, affixKey) in item.affixPools" x-key="JSON.stringify(item)">
+                        <template x-for="(affix, affixKey) in item.affixPools" :key="affix.id">
                             <div class="row">
                                 <div class="col-2 align-self-center">
                                     <button class="btn btn-sm" @click="removeAffix(key, affixKey)">⛔</button>
                                 </div>
                                 <div class="col-10">
                                     <div class="mb-1">
-                                        <select placeholder="Choose an affix" x-model="item.affixPools[affixKey].affix" @change="saveList">
+                                        <select placeholder="Choose an affix" x-model="item.affixPools[affixKey].affix" @change="saveList" class="border-warning-subtle">
                                             <option data-placeholder="true"></option>
                                             <template x-for="affixListKey in Object.keys(affixes)">
                                                 <option :value="affixListKey" x-text="affixes[affixListKey]" :selected="affixListKey == affix.affix"></option>
@@ -62,7 +62,7 @@
                                         </select>
                                     </div>
                                     <div class="mb-1">
-                                        <input type="text" x-model="item.affixPools[affixKey].value" class="form-control form-control-sm" placeholder="Affix value" @keyup="saveList">
+                                        <input type="text" x-model="item.affixPools[affixKey].value" class="form-control form-control-sm border-warning-subtle" placeholder="Affix value" @keyup="saveList">
                                     </div>
                                 </div>
                             </div>
@@ -71,7 +71,7 @@
                             <button class="btn btn-info btn-sm" @click="addAffix(key)">Add Affix</button>
                         </div>
                         <div class="mb-1">
-                            <input type="text" class="form-control form-control-sm" placeholder="Minimum affix" x-model="item.minAffixCount">
+                            <input type="text" class="form-control form-control-sm border-info-subtle" placeholder="Minimum affix" x-model="item.minAffixCount">
                         </div>
                         <div class="mb-1">
                             <button class="btn btn-info btn-danger btn-sm" @click="removeItem(key)">
