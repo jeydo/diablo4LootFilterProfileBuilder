@@ -24,12 +24,32 @@ document.addEventListener('alpine:init', () => {
             fetch('./itemtypes.json').then((response) => response.json())
                 .then((json) => this.itemTypes = json).catch((error) => console.error(error));
         },
+        triggerSlimSelect() {
+            this.$nextTick(() => {
+                document.querySelectorAll('select').forEach((select) => {
+                    if (select.classList.contains('slimselect')) {
+                        return;
+                    }
+                    this.setSlimSelect(select, select.attributes.placeholder.value);
+                });
+            });
+        },
+        setSlimSelect(key, placeholder) {
+            new SlimSelect({ select: key, settings: { placeholderText: placeholder }});
+            key.classList.add('slimselect');
+        },
         getMyList() {
             let myList = localStorage.getItem('myList');
             if (myList) {
                 return JSON.parse(myList);
             }
             return this.defaultList();
+        },
+        saveList() {
+            localStorage.setItem('myList', JSON.stringify(this.myList));
+        },
+        defaultList() {
+            return [this.newBuild()];
         },
         newBuild() {
             return {
@@ -45,13 +65,25 @@ document.addEventListener('alpine:init', () => {
         },
         removeBuild(key) {
             this.changeBuild(0);
-            this.$nextTick(() => {
-                this.myList.splice(key, 1);
-                this.saveList();
-            });
+            this.myList.splice(key, 1);
+            this.saveList();
         },
-        defaultList() {
-            return [this.newBuild()];
+        toggleValidatingBtn($el) {
+            $el.parentElement.querySelectorAll('.btn')
+                .forEach(el => el.classList.toggle('d-none'));
+        },
+        removeAllBuilds($el) {
+            this.changeBuild(0);
+            this.myList = this.defaultList();
+            this.saveList();
+            this.toggleValidatingBtn($el);
+        },
+        clearBuild($el) {
+            let build = this.newBuild();
+            build.name = this.myList[this.activeBuild].name;
+            this.myList[this.activeBuild] = build;
+            this.saveList();
+            this.toggleValidatingBtn($el);
         },
         buildNewItem() {
             return {
@@ -71,34 +103,11 @@ document.addEventListener('alpine:init', () => {
             this.myList[this.activeBuild].affixes.splice(key, 1);
             this.saveList();
         },
-        clearBuild() {
-            let build = this.newBuild();
-            build.name = this.myList[this.activeBuild].name;
-            this.myList[this.activeBuild] = build;
-            this.saveList();
-        },
-        saveList() {
-            localStorage.setItem('myList', JSON.stringify(this.myList));
-        },
         addNewItem() {
             let newItem = this.buildNewItem();
             this.myList[this.activeBuild].affixes.push(newItem);
             this.saveList();
             this.triggerSlimSelect();
-        },
-        triggerSlimSelect() {
-            this.$nextTick(() => {
-                document.querySelectorAll('select').forEach((select) => {
-                    if (select.classList.contains('slimselect')) {
-                        return;
-                    }
-                    this.setSlimSelect(select, select.attributes.placeholder.value);
-                });
-            });
-        },
-        setSlimSelect(key, placeholder) {
-            new SlimSelect({ select: key, settings: { placeholderText: placeholder }});
-            key.classList.add('slimselect');
         },
         addAffix(key) {
             this.myList[this.activeBuild].affixes[key].affixPools.push({

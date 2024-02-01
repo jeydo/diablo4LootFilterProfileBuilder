@@ -11,25 +11,41 @@
     <div id="app" x-data="d4data" class="container">
         <h1>Diablo4 Loot Filter File Builder</h1>
         <div class="row">
-            <template x-for="(build, buildIndex) in myList" x-key="build.id">
-                <div class="col-2">
-                    <button type="button" class="btn btn-sm btn-info" x-text="build.name" @click="changeBuild(buildIndex)" x-show="activeBuild != buildIndex"></button>
-                    <div class="input-group">
-                        <input type="text" x-show="activeBuild == buildIndex" class="form-control form-control-sm" :disabled="buildIndex != activeBuild" x-model="build.name" @change="saveList()">
-                        <template x-if="myList.length > 1 && buildIndex == activeBuild">
-                            <button type="button" class="btn btn-light btn-sm" @click="removeBuild(buildIndex)">⛔</button>
-                        </template>
+            <div class="col-10">
+                <div class="row">
+                <template x-for="(build, buildIndex) in myList" x-key="build.id">
+                    <div class="col-2">
+                        <button type="button" class="btn btn-sm btn-info" x-text="build.name" @click="changeBuild(buildIndex)" x-show="activeBuild != buildIndex"></button>
+                        <div class="input-group">
+                            <input type="text" x-show="activeBuild == buildIndex" class="form-control form-control-sm" :disabled="buildIndex != activeBuild" x-model="build.name" @change="saveList()">
+                            <template x-if="myList.length > 1 && buildIndex == activeBuild">
+                                <button type="button" class="btn btn-light btn-sm" @click="removeBuild(buildIndex)">⛔</button>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+                    <div class="col-2">
+                        <button type="button" class="btn btn-sm btn-primary" @click="addBuild()">➕ Add build</button>
                     </div>
                 </div>
-            </template>
-            <div class="col-3">
-                <button type="button" class="btn btn-sm btn-primary" @click="addBuild()">➕ Add build</button>
+            </div>
+            <div class="col-2 text-end">
+                <button type="button" class="btn btn-sm btn-danger" @click="toggleValidatingBtn($el)">⚠️ Remove all builds</button>
+                <button type="button" class="btn btn-sm btn-outline-danger d-none" @click="removeAllBuilds($el)">I'm sure !</button>
+                <button type="button" class="btn btn-sm btn-outline-danger d-none" @click="toggleValidatingBtn($el)">Nooo !</button>
             </div>
         </div>
         <hr>
-        <p class="action">
-            <span x-text="myList[activeBuild].name"></span> <button class="btn btn-warning btn-sm" @click="clearBuild()">Clear build</button>
-        </p>
+        <div class="action row">
+            <div class="col-10">
+                Current build : <span class="" x-text="myList[activeBuild].name"></span>
+            </div>
+            <div class="col-2 text-end">
+                <button type="button" class="btn btn-sm btn-danger" @click="toggleValidatingBtn($el)">⚠️ Clear build</button>
+                <button type="button" class="btn btn-sm btn-outline-danger d-none" @click="clearBuild($el)">I'm sure !</button>
+                <button type="button" class="btn btn-sm btn-outline-danger d-none" @click="toggleValidatingBtn($el)">Nooo !</button>
+            </div>
+        </div>
         <hr>
         <div>
             <h4>Content File :
