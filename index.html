@@ -10,8 +10,25 @@
 <body>
     <div id="app" x-data="d4data" class="container">
         <h1>Diablo4 Loot Filter File Builder</h1>
+        <div class="row">
+            <template x-for="(build, buildIndex) in myList" x-key="build.id">
+                <div class="col-2">
+                    <button type="button" class="btn btn-sm btn-info" x-text="build.name" @click="changeBuild(buildIndex)" x-show="activeBuild != buildIndex"></button>
+                    <div class="input-group">
+                        <input type="text" x-show="activeBuild == buildIndex" class="form-control form-control-sm" :disabled="buildIndex != activeBuild" x-model="build.name" @change="saveList()">
+                        <template x-if="myList.length > 1 && buildIndex == activeBuild">
+                            <button type="button" class="btn btn-light btn-sm" @click="removeBuild(buildIndex)">⛔</button>
+                        </template>
+                    </div>
+                </div>
+            </template>
+            <div class="col-3">
+                <button type="button" class="btn btn-sm btn-primary" @click="addBuild()">➕ Add build</button>
+            </div>
+        </div>
+        <hr>
         <p class="action">
-            <button class="btn btn-warning btn-sm" @click="clearItems()">Clear all</button>
+            <span x-text="myList[activeBuild].name"></span> <button class="btn btn-warning btn-sm" @click="clearBuild()">Clear build</button>
         </p>
         <hr>
         <div>
@@ -31,7 +48,7 @@
             <button class="btn btn-primary" @click="addNewItem()">Add New Item</button>
         </p>
         <div class="row gy-2 gx-4" x-show="showAffixes">
-            <template x-for="(item, key) in myList.affixes" :key="item.id">
+            <template x-for="(item, key) in myList[activeBuild].affixes" :key="item.id">
                 <div class="col-md-4">
                     <div class="border border-primary-subtle p-2 rounded">
                         <div class="mb-1">
@@ -62,7 +79,7 @@
                                         </select>
                                     </div>
                                     <div class="mb-1">
-                                        <input type="text" x-model="item.affixPools[affixKey].value" class="form-control form-control-sm border-warning-subtle" placeholder="Affix value" @keyup="saveList">
+                                        <input type="number" x-model="item.affixPools[affixKey].value" class="form-control form-control-sm border-warning-subtle" placeholder="Affix value" @keyup="saveList">
                                     </div>
                                 </div>
                             </div>
@@ -90,7 +107,7 @@
             <p>
                 <button class="btn btn-primary" @click="addAspect()">Add Aspect</button>
             </p>
-            <template x-for="(item, key) in myList.aspects" x-key="JSON.stringify(item)">
+            <template x-for="(item, key) in myList[activeBuild].aspects" x-key="JSON.stringify(item)">
                 <div class="col-md-4 card">
                     <div class="card-body">
                         <div class="mb-1">
