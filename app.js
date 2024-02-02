@@ -34,6 +34,11 @@ document.addEventListener('alpine:init', () => {
                 });
             });
         },
+        cleanSlimSelect() {
+            document.querySelectorAll('select.slimselect').forEach((select) => {
+                select.slim.destroy();
+            });
+        },
         setSlimSelect(key, placeholder) {
             new SlimSelect({ select: key, settings: { placeholderText: placeholder }});
             key.classList.add('slimselect');
@@ -96,6 +101,7 @@ document.addEventListener('alpine:init', () => {
             }
         },
         changeBuild(key) {
+            this.cleanSlimSelect();
             this.activeBuild = key;
             this.triggerSlimSelect();
         },
