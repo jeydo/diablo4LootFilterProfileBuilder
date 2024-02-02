@@ -140,7 +140,7 @@
                                     <select name="form-control" placeholder="Choose an aspect" x-model="item.aspect" @change="saveList()">
                                         <option data-placeholder="true"></option>
                                         <template x-for="aspectListKey in Object.keys(aspects)">
-                                            <option :value="aspectListKey" :data-html="'<strong>' + aspectListKey + '</strong> : ' + aspects[aspectListKey].desc" :selected="aspectListKey == item.aspect"></option>
+                                            <option :value="aspectListKey" :data-html="'<strong>' + aspectListKey + '</strong> : ' + aspects[aspectListKey].desc" :selected="aspectListKey == item.aspect" x-text="aspectListKey + ' : ' + aspects[aspectListKey].desc"></option>
                                         </template>
                                     </select>
                                     <input type="number" x-model="item.value" class="form-control form-control-sm border-info-subtle" placeholder="Aspect value" @change="saveList()" />
