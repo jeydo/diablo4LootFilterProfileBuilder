@@ -15,6 +15,10 @@
             border-color: var(--bs-warning-border-subtle);
             box-shadow: 0 0 3px 0px #CFCFCF;
         }
+        .dropdown-menu {
+            max-height: 200px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
@@ -81,11 +85,24 @@
                             <input type="text" x-model="item.name" class="form-control form-control-sm border-info-subtle" placeholder="Name" @keyup="saveList">
                         </div>
                         <div class="mb-1">
-                            <select x-model="item.itemType" multiple placeholder="Choose one or several item type" @change="saveList" class="border-info-subtle">
-                                <template x-for="itemType in itemTypes">
-                                    <option :value="itemType" x-text="itemType" :selected="item.itemType.indexOf(itemType) != -1"></option>
-                                </template>
-                            </select>
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text">
+                                    <template x-for="(itemType, itemTypeKey) in item.itemType">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-sm btn-info" x-text="itemType"></button>
+                                            <button type="button" class="btn btn-sm btn-info" @click="item.itemType.splice(itemTypeKey, 1); saveList();">x</button>
+                                        </div>&nbsp;
+                                    </template>
+                                </span>
+                                <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" data-bs-auto-close="outside"> </button>
+                                <ul class="dropdown-menu">
+                                    <template x-for="itemType in itemTypes">
+                                        <li x-show="item.itemType.indexOf(itemType) == -1">
+                                            <a class="dropdown-item" :data-value="itemType" href="#" x-text="itemType" @click="item.itemType.push(itemType); saveList();"></a>
+                                        </li>
+                                    </template>
+                                </ul>
+                            </div>
                         </div>
                         <div class="mb-1">
                             <input type="number" class="form-control form-control-sm border-info-subtle" x-model="item.minPower" placeholder="Min Power" @change="saveList">
