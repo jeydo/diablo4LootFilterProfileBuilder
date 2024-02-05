@@ -10,11 +10,15 @@ document.addEventListener('alpine:init', () => {
         showAspects : true,
         showContentFile : false,
         activeBuild : 0,
+        activeItemTypeDropdown : -1,
+        activeAffixDropdown : -1,
+        activeAspectDropdown : -1,
+        searchTextAspects : '',
+        searchTextAffixes : '',
         myList : [],
         init() {
             this.fetchFiles();
             this.myList = this.getMyList();
-            this.triggerSlimSelect();
         },
         fetchFiles() {
             fetch('./affixes.json').then((response) => response.json())
@@ -23,25 +27,6 @@ document.addEventListener('alpine:init', () => {
                 .then((json) => this.aspects = json).catch((error) => console.error(error));
             fetch('./itemtypes.json').then((response) => response.json())
                 .then((json) => this.itemTypes = json).catch((error) => console.error(error));
-        },
-        triggerSlimSelect() {
-            this.$nextTick(() => {
-                document.querySelectorAll('select').forEach((select) => {
-                    if (select.classList.contains('slimselect')) {
-                        return;
-                    }
-                    this.setSlimSelect(select, select.attributes.placeholder.value);
-                });
-            });
-        },
-        cleanSlimSelect() {
-            document.querySelectorAll('select.slimselect').forEach((select) => {
-                select.slim.destroy();
-            });
-        },
-        setSlimSelect(key, placeholder) {
-            new SlimSelect({ select: key, settings: { placeholderText: placeholder }});
-            key.classList.add('slimselect');
         },
         getMyList() {
             let myList = localStorage.getItem('myList');
@@ -55,6 +40,31 @@ document.addEventListener('alpine:init', () => {
         },
         defaultList() {
             return [this.newBuild()];
+        },
+        searchListAffixes() {
+            return Object.fromEntries(
+                Object.entries(this.affixes).filter(([key, value]) => {
+                    return value.toLowerCase().includes(this.searchTextAffixes.toLowerCase());
+                })
+            );
+        },
+        searchListAspects() {
+            return Object.fromEntries(
+                Object.entries(this.aspects).filter(([key, value]) => {
+                    return value.desc.toLowerCase().includes(this.searchTextAspects.toLowerCase())
+                        || key.toLowerCase().includes(this.searchTextAspects.toLowerCase());
+                })
+            );
+        },
+        resetDropdowns() {
+            this.activeItemTypeDropdown = -1;
+            this.activeAffixDropdown = -1;
+            this.activeAspectDropdown = -1;
+            this.resetTextSearch();
+        },
+        resetTextSearch() {
+            this.searchTextAffixes = '';
+            this.searchTextAspects = '';
         },
         newBuild() {
             return {
@@ -90,6 +100,29 @@ document.addEventListener('alpine:init', () => {
             this.saveList();
             this.toggleValidatingBtn($el);
         },
+        showDropdown(key, dropdownType) {
+            if (this.$event.target.classList.contains('remove')) {
+                return;
+            }
+            this[dropdownType] = key;
+            this.$el.dataset['bsToggle'] = 'dropdown';
+            this.$nextTick(() => {
+                let dropdown = bootstrap.Dropdown.getOrCreateInstance(this.$el, {
+                    autoClose : this.$el.dataset['dropdownClose'] ?? 'outside'
+                }),
+                    $this = this;
+                dropdown.show();
+                this.$el.parentElement.querySelector('.dropdown-menu input')?.focus();
+                function removeEventListener() {
+                    $this[dropdownType] = -1;
+                    dropdown.dispose();
+                    delete $this.$el.dataset['bsToggle'];
+                    $this.resetTextSearch();
+                    document.removeEventListener('hidden.bs.dropdown', removeEventListener);
+                }
+                this.$el.addEventListener('hidden.bs.dropdown', removeEventListener);
+            });
+        },
         buildNewItem() {
             return {
                 id: new Date().getTime(),
@@ -101,9 +134,8 @@ document.addEventListener('alpine:init', () => {
             }
         },
         changeBuild(key) {
-            this.cleanSlimSelect();
             this.activeBuild = key;
-            this.triggerSlimSelect();
+            this.resetDropdowns();
         },
         removeItem(key) {
             this.myList[this.activeBuild].affixes.splice(key, 1);
@@ -113,7 +145,6 @@ document.addEventListener('alpine:init', () => {
             let newItem = this.buildNewItem();
             this.myList[this.activeBuild].affixes.push(newItem);
             this.saveList();
-            this.triggerSlimSelect();
         },
         addAffix(key) {
             this.myList[this.activeBuild].affixes[key].affixPools.push({
@@ -121,7 +152,6 @@ document.addEventListener('alpine:init', () => {
                 affix: '',
                 value: ''
             });
-            this.triggerSlimSelect();
         },
         removeAffix(key, affixKey) {
             this.myList[this.activeBuild].affixes[key].affixPools.splice(affixKey, 1);
@@ -160,7 +190,6 @@ document.addEventListener('alpine:init', () => {
                 aspect: '',
                 value: ''
             });
-            this.triggerSlimSelect();
         },
         removeAspect(key) {
             this.myList[this.activeBuild].aspects.splice(key, 1);
