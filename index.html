@@ -89,7 +89,7 @@
         <div class="affixes">
             <div class="sticky-top pt-1 pb-1 bg-body mb-2">
                 <h4>Affixes :
-                <button type="button" class="btn btn-sm" x-text="showAffixes ? '⏫' : '⏬'" @click="showAffixes = !showAffixes"></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary" x-text="showAffixes ? '⏫' : '⏬'" @click="showAffixes = !showAffixes"></button>
             </h4>
                 <p x-show="showAffixes">
                     <button class="btn btn-primary" @click="addNewItem()">Add New Item</button>
@@ -168,7 +168,7 @@
         <div class="aspects">
             <div class="sticky-top pt-1 pb-1 bg-body mb-2">
                 <h4>Aspects :
-                    <button type="button" class="btn btn-sm" x-html="showAspects ? '⏫' : '⏬'" @click="showAspects = !showAspects"></button>
+                    <button type="button" class="btn btn-sm btn-outline-secondary" x-html="showAspects ? '⏫' : '⏬'" @click="showAspects = !showAspects"></button>
                 </h4>
                 <p x-show="showAspects">
                     <button class="btn btn-primary" @click="addAspect()">Add Aspect</button>
