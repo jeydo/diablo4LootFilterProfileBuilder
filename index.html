@@ -9,6 +9,7 @@
         .dropdown-menu {
             max-height: 200px;
             overflow-y: auto;
+            z-index: 1030;
         }
         .dropdown-menu-aspect {
             max-width: 45rem;
@@ -37,7 +38,7 @@
     </style>
 </head>
 <body>
-    <div id="app" x-data="d4data" class="container">
+    <div id="app" x-data="d4data" class="container-xxl">
         <h1>Diablo4 Loot Filter File Builder</h1>
         <div class="row">
             <div class="col">
@@ -97,7 +98,7 @@
             </div>
             <div class="row gy-2 gx-4" x-show="showAffixes">
                 <template x-for="(item, key) in myList[activeBuild].affixes" :key="item.id">
-                    <div class="col-md-4">
+                    <div class="col-xl-4 col-md-6">
                         <div class="border border-primary-subtle p-2 rounded">
                             <div class="mb-1">
                                 <input type="text" x-model="item.name" class="form-control form-control-sm border-info-subtle" placeholder="Name" @keyup="saveList">
