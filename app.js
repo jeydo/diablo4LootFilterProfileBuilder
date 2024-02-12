@@ -1,20 +1,21 @@
-let itemTypes = [],
-    affixes = {},
-    aspects = {};
 document.addEventListener('alpine:init', () => {
     Alpine.data('d4data', () => ({
-        itemTypes : itemTypes,
-        affixes : affixes,
-        aspects : aspects,
+        itemTypes : {},
+        affixes : {},
+        aspects : {},
+        uniques : {},
         showAffixes : true,
         showAspects : true,
         showContentFile : false,
+        showUniques : true,
         activeBuild : 0,
         activeItemTypeDropdown : -1,
         activeAffixDropdown : -1,
         activeAspectDropdown : -1,
+        activeUniqueDropdown : -1,
         searchTextAspects : '',
         searchTextAffixes : '',
+        searchTextUniques : '',
         myList : [],
         init() {
             this.fetchFiles();
@@ -27,11 +28,17 @@ document.addEventListener('alpine:init', () => {
                 .then((json) => this.aspects = json).catch((error) => console.error(error));
             fetch('./itemtypes.json').then((response) => response.json())
                 .then((json) => this.itemTypes = json).catch((error) => console.error(error));
+            fetch('./uniques.json').then((response) => response.json())
+                .then((json) => this.uniques = json).catch((error) => console.error(error));
         },
         getMyList() {
             let myList = localStorage.getItem('myList');
             if (myList) {
-                return JSON.parse(myList);
+                myList = JSON.parse(myList);
+                myList.forEach(item => {
+                    item.uniques = item.uniques ?? [];
+                });
+                return myList;
             }
             return this.defaultList();
         },
@@ -56,22 +63,33 @@ document.addEventListener('alpine:init', () => {
                 })
             );
         },
+        searchListUniques() {
+            return Object.fromEntries(
+                Object.entries(this.uniques).filter(([key, value]) => {
+                    return value.desc.toLowerCase().includes(this.searchTextUniques.toLowerCase())
+                        || key.toLowerCase().includes(this.searchTextUniques.toLowerCase());
+                })
+            );
+        },
         resetDropdowns() {
             this.activeItemTypeDropdown = -1;
             this.activeAffixDropdown = -1;
             this.activeAspectDropdown = -1;
+            this.activeUniqueDropdown = -1;
             this.resetTextSearch();
         },
         resetTextSearch() {
             this.searchTextAffixes = '';
             this.searchTextAspects = '';
+            this.searchTextUniques = '';
         },
         newBuild() {
             return {
                 id: new Date().getTime(),
                 name : 'My Build ' + (this.myList.length + 1),
                 aspects : [],
-                affixes : []
+                affixes : [],
+                uniques : []
             }
         },
         addBuild() {
@@ -137,8 +155,8 @@ document.addEventListener('alpine:init', () => {
             this.activeBuild = key;
             this.resetDropdowns();
         },
-        removeItem(key) {
-            this.myList[this.activeBuild].affixes.splice(key, 1);
+        removeItem(key, pool) {
+            this.myList[this.activeBuild][pool].splice(key, 1);
             this.saveList();
         },
         addNewItem() {
@@ -146,15 +164,15 @@ document.addEventListener('alpine:init', () => {
             this.myList[this.activeBuild].affixes.push(newItem);
             this.saveList();
         },
-        addAffix(key) {
-            this.myList[this.activeBuild].affixes[key].affixPools.push({
+        addAffix(key, pool) {
+            this.myList[this.activeBuild][pool][key].affixPools.push({
                 id: new Date().getTime(),
                 affix: '',
                 value: ''
             });
         },
-        removeAffix(key, affixKey) {
-            this.myList[this.activeBuild].affixes[key].affixPools.splice(affixKey, 1);
+        removeAffix(key, affixKey, pool) {
+            this.myList[this.activeBuild][pool][key].affixPools.splice(affixKey, 1);
             this.saveList();
         },
         contentFile() {
@@ -174,19 +192,38 @@ document.addEventListener('alpine:init', () => {
                     content += "      minPower: " + item.minPower + "\n";
                     content += "      affixPool:\n";
                     for (const affix of item.affixPools) {
-                        content += "        - [" + affix.affix + (affix.value ? ', ' + affix.value : '') + "]\n";
+                        content += "        " + this.renderAffix(affix);
                     }
                     content += "      minAffixCount: " + item.minAffixCount + "\n";
                     content += "\n";
                 }
             }
+
+            if (this.myList[this.activeBuild].uniques.length) {
+                content += "Uniques:\n";
+                for (const item of this.myList[this.activeBuild].uniques) {
+                    content += "  - aspect: [" + item.unique + (item.value ? ', ' + item.value : '') + "]\n";
+                    content += "    minPower: " + item.minPower + "\n";
+                    if (item.affixPools.length) {
+                        content += "    affixPools:\n";
+                        for (const affix of item.affixPools) {
+                            content += "      " + this.renderAffix(affix);
+                        }
+                    }
+                    content += "\n";
+                }
+            }
             return content;
+        },
+        renderAffix(affix) {
+            return "- [" + affix.affix + (affix.value ? ', ' + affix.value : '') + "]\n";
         },
         copyContentFile() {
             navigator.clipboard.writeText(this.contentFile());
         },
         addAspect(){
             this.myList[this.activeBuild].aspects.push({
+                id : new Date().getTime(),
                 aspect: '',
                 value: ''
             });
@@ -194,6 +231,16 @@ document.addEventListener('alpine:init', () => {
         removeAspect(key) {
             this.myList[this.activeBuild].aspects.splice(key, 1);
             this.saveList();
+        },
+
+        addUnique() {
+            this.myList[this.activeBuild].uniques.push({
+                id : new Date().getTime(),
+                unique: '',
+                value: '',
+                minPower : 850,
+                affixPools: []
+            });
         }
     }));
 });

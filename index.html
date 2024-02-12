@@ -35,6 +35,9 @@
         .sticky-top {
             box-shadow: 0px 4px 4px #3333330d;
         }
+        input:invalid {
+            border-color: rgba(var(--bs-danger-rgb)) !important;
+        }
     </style>
 </head>
 <body>
@@ -77,13 +80,19 @@
             </div>
         </div>
         <hr>
+        <div class="row">
+            <div class="col-10">
+                <h4>Content File :
+                    <button type="button" class="btn btn-sm btn-outline-secondary" @click="showContentFile = !showContentFile" x-text="showContentFile ? '⏫' : '⏬'"></button>
+                </h4>
+            </div>
+            <div class="col-2 text-end">
+                <button type="button" class="btn btn-info" @click="copyContentFile()">Copy content file</button>
+            </div>
+        </div>
         <div>
-            <h4>Content File :
-                <button type="button" class="btn btn-sm" @click="showContentFile = !showContentFile" x-text="showContentFile ? '⏫' : '⏬'"></button>
-            </h4>
             <div x-show="showContentFile" class="text-end">
-                <button type="button" class="btn btn-info" @click="copyContentFile()">Copy</button>
-                <textarea cols="30" rows="3" class="form-control" x-text="contentFile()"></textarea>
+                <textarea cols="30" rows="15" class="form-control" x-text="contentFile()"></textarea>
             </div>
         </div>
         <hr>
@@ -101,11 +110,11 @@
                     <div class="col-xl-4 col-md-6">
                         <div class="border border-primary-subtle p-2 rounded">
                             <div class="mb-1">
-                                <input type="text" x-model="item.name" class="form-control form-control-sm border-info-subtle" placeholder="Name" @keyup="saveList">
+                                <input type="text" x-model="item.name" class="form-control form-control-sm border-info-subtle" placeholder="Name" @keyup="saveList" required pattern="\pL{1,}">
                             </div>
                             <div class="mb-1">
                                 <div class="border border-primary-subtle p-1 rounded pointer" @click="showDropdown(key, 'activeItemTypeDropdown')">
-                                    <template x-if="item.itemType <= 0">
+                                    <template x-if="item.itemType.length <= 0">
                                         <span>Choose one or multiple item type</span>
                                     </template>
                                     <template x-for="(itemType, itemTypeKey) in item.itemType">
@@ -133,7 +142,7 @@
                                     <div class="input-group input-group-sm">
                                         <span data-dropdown-close="true" :title="affixes[affix.affix] ?? ''" class="text-start input-group-text affix-value border-warning-subtle" x-text="affixes[affix.affix] ?? 'Choose an affix'" @click="showDropdown(key + '-' + affixKey, 'activeAffixDropdown')"></span>
                                         <input type="number" class="form-control form-control-sm border-warning-subtle" x-model="affix.value" @keyup="saveList" placeholder="Value">
-                                        <button type="button" class="btn btn-sm btn-outline-secondary border-warning-subtle" @click="removeAffix(key, affixKey)">⛔</button>
+                                        <button type="button" class="btn btn-sm btn-outline-secondary border-warning-subtle" @click="removeAffix(key, affixKey, 'affixes')">⛔</button>
                                         <template x-if="activeAffixDropdown == key + '-' + affixKey">
                                             <div class="dropdown-menu">
                                                 <form>
@@ -150,13 +159,13 @@
                                 </div>
                             </template>
                             <div class="text-end mb-1">
-                                <button class="btn btn-info btn-sm" @click="addAffix(key)">Add Affix</button>
+                                <button class="btn btn-info btn-sm" @click="addAffix(key, 'affixes')">Add Affix</button>
                             </div>
                             <div class="mb-1">
                                 <input type="number" class="form-control form-control-sm border-info-subtle" placeholder="Minimum affix" x-model="item.minAffixCount">
                             </div>
                             <div class="mb-1">
-                                <button class="btn btn-info btn-danger btn-sm" @click="removeItem(key)">
+                                <button class="btn btn-info btn-danger btn-sm" @click="removeItem(key, 'affixes')">
                                     Remove
                                 </button>
                             </div>
@@ -175,9 +184,9 @@
                     <button class="btn btn-primary" @click="addAspect()">Add Aspect</button>
                 </p>
             </div>
-            <div class="row mb-5" x-show="showAspects">
+            <div class="mb-5" x-show="showAspects">
                 <div class="row gy-2 gx-4">
-                    <template x-for="(item, key) in myList[activeBuild].aspects" x-key="JSON.stringify(item)">
+                    <template x-for="(item, key) in myList[activeBuild].aspects" x-key="item.id || JSON.stringify(item)">
                         <div class="col-md-4">
                             <div class="border border-primary-subtle p-2 rounded">
                                 <div class="mb-1">
@@ -203,6 +212,76 @@
                         </div>
                     </template>
                 </div>
+            </div>
+        </div>
+
+        <hr>
+
+        <div class="uniques">
+            <div class="sticky-top pt-1 pb-1 bg-body mb-2">
+                <h4>Uniques :
+                    <button type="button" class="btn btn-sm btn-outline-secondary" x-html="showUniques ? '⏫' : '⏬'" @click="showUniques = !showUniques"></button>
+                </h4>
+                <p x-show="showUniques">
+                    <button class="btn btn-primary" @click="addUnique()">Add unique</button>
+                </p>
+            </div>
+            <div class="row mb-5 gy-2 gx-4" x-show="showUniques">
+            <template x-for="(item, key) in myList[activeBuild].uniques" :key="item.id">
+                <div class="col-xl-4 col-md-6">
+                    <div class="border border-primary-subtle p-2 rounded">
+                        <div class="mb-1 input-group">
+                            <span :title="uniques[item.unique]?.desc ?? 'Choose a unique'" data-dropdown-close="true" class="text-start input-group-text affix-value border-info-subtle" x-text="item.unique ? item.unique : 'Choose a unique'" @click="showDropdown(key, 'activeUniqueDropdown')"></span>
+                            <input type="number" x-model="item.value" class="form-control form-control-sm border-info-subtle" placeholder="Value" @change="saveList()" />
+                            <template x-if="activeUniqueDropdown == key">
+                                <div class="dropdown-menu dropdown-menu-aspect">
+                                    <form>
+                                        <div class="p-1">
+                                            <input type="text" class="form-control form-control-sm border-info-subtle" x-model="searchTextUniques" placeholder="Search a unique">
+                                        </div>
+                                    </form>
+                                    <template x-for="uniqueListKey in Object.keys(searchListUniques())">
+                                        <a :class="{ 'dropdown-item' : true, active : uniqueListKey == item.unique }" href="#" x-html="'<strong>' + uniqueListKey + '</strong> : ' + uniques[uniqueListKey].desc" @click.prevent="item.unique = uniqueListKey; saveList();"></a>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                        <div class="mb-1">
+                            <input type="number" class="form-control form-control-sm border-info-subtle" x-model="item.minPower" placeholder="Min Power" @change="saveList">
+                        </div>
+                        <template x-for="(affix, affixKey) in item.affixPools" :key="affix.id">
+
+                            <div class="input-group input-group-sm mb-1">
+                                <span data-dropdown-close="true" :title="affixes[affix.affix] ?? ''" class="text-start input-group-text affix-value border-warning-subtle" x-text="affixes[affix.affix] ?? 'Choose an affix'" @click="showDropdown(key + '-' + affixKey, 'activeAffixDropdown')"></span>
+                                <input type="number" class="form-control form-control-sm border-warning-subtle" x-model="affix.value" @keyup="saveList" placeholder="Value">
+                                <button type="button" class="btn btn-sm btn-outline-secondary border-warning-subtle" @click="removeAffix(key, affixKey, 'uniques')">⛔</button>
+                                <template x-if="activeAffixDropdown == key + '-' + affixKey">
+                                    <div class="dropdown-menu">
+                                        <form>
+                                            <div class="p-1">
+                                                <input type="text" class="form-control form-control-sm border-info-subtle" x-model="searchTextAffixes" placeholder="Search an affix">
+                                            </div>
+                                        </form>
+                                        <template x-for="affixKey in Object.keys(searchListAffixes())">
+                                            <a :class="{ 'dropdown-item' : true, active : affixKey == affix.affix }" href="#" x-text="affixes[affixKey]" @click.prevent="affix.affix = affixKey; saveList();"></a>
+                                        </template>
+                                    </div>
+                                </template>
+                            </div>
+
+                        </template>
+                        <div class="text-end mb-1">
+                            <button class="btn btn-info btn-sm" @click="addAffix(key, 'uniques')">Add Affix</button>
+                        </div>
+
+                        <div class="mb-1">
+                            <button class="btn btn-info btn-danger btn-sm" @click="removeItem(key, 'uniques')">
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </template>
             </div>
         </div>
         <div class="position-fixed bottom-0 end-0">
