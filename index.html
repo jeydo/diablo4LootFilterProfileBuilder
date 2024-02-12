@@ -44,6 +44,8 @@
 <body>
     <div id="app" x-data="d4data" class="container-xxl">
         <h1>Diablo4 Loot Filter File Builder</h1>
+        <p>Profile builder for <a href="https://github.com/aeon0/d4lf" target="_blank">https://github.com/aeon0/d4lf</a></p>
+        <hr>
         <div class="row">
             <div class="col">
                 <div class="row">
@@ -72,7 +74,7 @@
         <hr>
         <div class="action row">
             <div class="col-10">
-                Current build : <span class="" x-text="myList[activeBuild].name"></span>
+                <i>Current build :</i> <span class="fw-bold" x-text="myList[activeBuild].name"></span>
             </div>
             <div class="col-2 text-end">
                 <button type="button" class="btn btn-sm btn-danger" @click="toggleValidatingBtn($el)">⚠️ Clear build</button>
@@ -109,7 +111,7 @@
             <div class="row gy-2 gx-4" x-show="showAffixes">
                 <template x-for="(item, key) in myList[activeBuild].affixes" :key="item.id">
                     <div class="col-xl-4 col-md-6">
-                        <div class="border border-primary-subtle p-2 rounded">
+                        <div class="border border-primary-subtle p-2 rounded h-100">
                             <div class="mb-1">
                                 <input type="text" x-model="item.name" class="form-control form-control-sm border-info-subtle" placeholder="Name" @keyup="saveList" required pattern="\pL{1,}">
                             </div>
@@ -189,7 +191,7 @@
                 <div class="row gy-2 gx-4">
                     <template x-for="(item, key) in myList[activeBuild].aspects" x-key="item.id || JSON.stringify(item)">
                         <div class="col-md-4">
-                            <div class="border border-primary-subtle p-2 rounded">
+                            <div class="border border-primary-subtle p-2 rounded h-100">
                                 <div class="mb-1">
                                     <div class="input-group">
                                         <span :title="aspects[item.aspect]?.desc ?? 'Choose an aspect'" data-dropdown-close="true" class="text-start input-group-text affix-value border-info-subtle" x-text="item.aspect ? item.aspect : 'Choose an aspect'" @click="showDropdown(key, 'activeAspectDropdown')"></span>
@@ -230,7 +232,7 @@
             <div class="row mb-5 gy-2 gx-4" x-show="showUniques">
             <template x-for="(item, key) in myList[activeBuild].uniques" :key="item.id">
                 <div class="col-xl-4 col-md-6">
-                    <div class="border border-primary-subtle p-2 rounded">
+                    <div class="border border-primary-subtle p-2 rounded h-100">
                         <div class="mb-1 input-group">
                             <span :title="uniques[item.unique]?.desc ?? 'Choose a unique'" data-dropdown-close="true" class="text-start input-group-text affix-value border-info-subtle" x-text="item.unique ? item.unique : 'Choose a unique'" @click="showDropdown(key, 'activeUniqueDropdown')"></span>
                             <input type="number" x-model="item.value" class="form-control form-control-sm border-info-subtle" placeholder="Value" @change="saveList()" />
