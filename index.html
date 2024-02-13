@@ -48,13 +48,13 @@
         <hr>
         <div class="row">
             <div class="col">
-                <div class="row">
+                <div class="row gx-2">
                 <template x-for="(build, buildIndex) in myList" x-key="build.id">
                     <div class="col-2">
-                        <button type="button" class="btn btn-sm btn-info" x-text="build.name" @click="changeBuild(buildIndex)" x-show="activeBuild != buildIndex"></button>
-                        <div class="input-group">
-                            <input type="text" x-show="activeBuild == buildIndex" class="form-control form-control-sm" :disabled="buildIndex != activeBuild" x-model="build.name" @change="saveList()">
-                            <template x-if="myList.length > 1 && buildIndex == activeBuild">
+                        <span class="btn btn-sm btn-info w-100 border-info-subtle" x-text="build.name" @click="changeBuild(buildIndex)" x-show="activeBuild != buildIndex"></span>
+                        <div class="input-group" x-show="activeBuild == buildIndex">
+                            <input type="text" class="form-control form-control-sm" :disabled="buildIndex != activeBuild" x-model="build.name" @change="saveList()">
+                            <template x-if="myList.length > 1">
                                 <button type="button" class="btn btn-light btn-sm" @click="removeBuild(buildIndex)">⛔</button>
                             </template>
                         </div>
@@ -66,7 +66,7 @@
                 </div>
             </div>
         </div>
-        <div class="row">
+        <div class="row mt-2">
             <div class="col text-end">
                 <button type="button" class="btn btn-sm btn-outline-info" @click="exportBuilds">Export builds</button>
                 <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#modalImport">Import builds</button>
