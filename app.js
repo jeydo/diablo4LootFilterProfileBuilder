@@ -16,6 +16,7 @@ document.addEventListener('alpine:init', () => {
         searchTextAspects : '',
         searchTextAffixes : '',
         searchTextUniques : '',
+        toastMessage : '',
         myList : [],
         init() {
             this.fetchFiles();
@@ -217,6 +218,31 @@ document.addEventListener('alpine:init', () => {
         },
         renderAffix(affix) {
             return "- [" + affix.affix + (affix.value ? ', ' + affix.value : '') + "]\n";
+        },
+        exportBuilds() {
+            navigator.clipboard.writeText(JSON.stringify(this.myList));
+            this.showToast('Export copied to clipboard');
+        },
+        showToast(message) {
+            this.toastMessage = message;
+            const toast = bootstrap.Toast.getOrCreateInstance(this.$refs.toast);
+            toast.show({});
+        },
+        importBuilds() {
+            let data = this.$refs.importContent.value;
+            try {
+                data = JSON.parse(data);
+                if (Array.isArray(data)) {
+                    this.myList = data;
+                    this.saveList();
+                    const modal = bootstrap.Modal.getOrCreateInstance(this.$refs.modal);
+                    modal.hide();
+                    this.$refs.importContent.value = '';
+                    this.showToast('Builds imported');
+                }
+            } catch (e) {
+                console.error(e);
+            }
         },
         copyContentFile() {
             navigator.clipboard.writeText(this.contentFile());

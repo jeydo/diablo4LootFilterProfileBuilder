@@ -65,6 +65,12 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div class="row">
+            <div class="col text-end">
+                <button type="button" class="btn btn-sm btn-outline-info" @click="exportBuilds">Export builds</button>
+                <button type="button" class="btn btn-sm btn-outline-info" data-bs-toggle="modal" data-bs-target="#modalImport">Import builds</button>
+            </div>
             <div class="col-2 text-end">
                 <button type="button" class="btn btn-sm btn-danger" @click="toggleValidatingBtn($el)">⚠️ Remove all builds</button>
                 <button type="button" class="btn btn-sm btn-outline-danger d-none" @click="removeAllBuilds($el)">I'm sure !</button>
@@ -113,7 +119,7 @@
                     <div class="col-xl-4 col-md-6">
                         <div class="border border-primary-subtle p-2 rounded h-100">
                             <div class="mb-1">
-                                <input type="text" x-model="item.name" class="form-control form-control-sm border-info-subtle" placeholder="Name" @keyup="saveList" required pattern="\pL{1,}">
+                                <input type="text" x-model="item.name" class="form-control form-control-sm border-info-subtle" placeholder="Name" @keyup="saveList" required pattern="[A-Za-z0-9]{1,}">
                             </div>
                             <div class="mb-1">
                                 <div class="border border-primary-subtle p-1 rounded pointer" @click="showDropdown(key, 'activeItemTypeDropdown')">
@@ -290,6 +296,37 @@
         <div class="position-fixed bottom-0 end-0">
             <a href="#" @click.prevent="window.scroll(0, 0)" class="btn" title="Go to top">⏫</a>
         </div>
+        <div class="toast-container top-0 start-50 translate-middle-x">
+            <div class="toast align-items-center text-bg-primary border-0" x-ref="toast">
+                <div class="d-flex">
+                    <div class="toast-body" x-text="toastMessage"></div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" tabindex="-1" id="modalImport" x-ref="modal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Import builds</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="bg-danger-subtle border border-danger mb-1 p-2 rounded">
+                            ⚠️ All your current builds will be replaced by the imported ones.
+                        </div>
+                        <form>
+                            <textarea cols="30" rows="10" class="form-control" x-ref="importContent" placeholder="Copy your exported builds here"></textarea>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" @click="importBuilds">Import</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     <script src="app.js?8394573"></script>
