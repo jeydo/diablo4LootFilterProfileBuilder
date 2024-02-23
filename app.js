@@ -9,18 +9,23 @@ document.addEventListener('alpine:init', () => {
         showContentFile : false,
         showUniques : true,
         activeBuild : 0,
-        activeItemTypeDropdown : -1,
-        activeAffixDropdown : -1,
-        activeAspectDropdown : -1,
-        activeUniqueDropdown : -1,
+        currentObjForDropdown : null,
         searchTextAspects : '',
         searchTextAffixes : '',
         searchTextUniques : '',
         toastMessage : '',
+        dropdownAffix : null,
+        dropdownItemTypes : null,
+        dropdownAspects : null,
+        dropdownUniques : null,
         myList : [],
         init() {
             this.fetchFiles();
             this.myList = this.getMyList();
+            this.dropdownAffix = document.getElementById('dropdownAffix');
+            this.dropdownItemTypes = document.getElementById('dropdownItemTypes');
+            this.dropdownAspects = document.getElementById('dropdownAspects');
+            this.dropdownUniques = document.getElementById('dropdownUniques');
         },
         fetchFiles() {
             fetch('./affixes.json').then((response) => response.json())
@@ -73,10 +78,6 @@ document.addEventListener('alpine:init', () => {
             );
         },
         resetDropdowns() {
-            this.activeItemTypeDropdown = -1;
-            this.activeAffixDropdown = -1;
-            this.activeAspectDropdown = -1;
-            this.activeUniqueDropdown = -1;
             this.resetTextSearch();
         },
         resetTextSearch() {
@@ -119,21 +120,23 @@ document.addEventListener('alpine:init', () => {
             this.saveList();
             this.toggleValidatingBtn($el);
         },
-        showDropdown(key, dropdownType) {
+        showDropdown(obj, dropdown) {
             if (this.$event.target.classList.contains('remove')) {
                 return;
             }
-            this[dropdownType] = key;
+            this.currentObjForDropdown = obj;
+            this.$event.target.parentElement.appendChild(dropdown);
+
             this.$el.dataset['bsToggle'] = 'dropdown';
             this.$nextTick(() => {
+
                 let dropdown = bootstrap.Dropdown.getOrCreateInstance(this.$el, {
                     autoClose : this.$el.dataset['dropdownClose'] ?? 'outside'
                 }),
-                    $this = this;
+                $this = this;
                 dropdown.show();
                 this.$el.parentElement.querySelector('.dropdown-menu input')?.focus();
                 function removeEventListener() {
-                    $this[dropdownType] = -1;
                     dropdown.dispose();
                     delete $this.$el.dataset['bsToggle'];
                     $this.resetTextSearch();
