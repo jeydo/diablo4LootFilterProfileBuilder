@@ -2,21 +2,17 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('d4data', () => ({
         itemTypes : {},
         affixes : {},
-        aspects : {},
         uniques : {},
         showAffixes : true,
-        showAspects : true,
         showContentFile : false,
         showUniques : true,
         activeBuild : 0,
         currentObjForDropdown : null,
-        searchTextAspects : '',
         searchTextAffixes : '',
         searchTextUniques : '',
         toastMessage : '',
         dropdownAffix : null,
         dropdownItemTypes : null,
-        dropdownAspects : null,
         dropdownUniques : null,
         myList : [],
         init() {
@@ -24,14 +20,11 @@ document.addEventListener('alpine:init', () => {
             this.myList = this.getMyList();
             this.dropdownAffix = document.getElementById('dropdownAffix');
             this.dropdownItemTypes = document.getElementById('dropdownItemTypes');
-            this.dropdownAspects = document.getElementById('dropdownAspects');
             this.dropdownUniques = document.getElementById('dropdownUniques');
         },
         fetchFiles() {
             fetch('./affixes.json').then((response) => response.json())
                 .then((json) => this.affixes = json).catch((error) => console.error(error));
-            fetch('./aspects.json').then((response) => response.json())
-                .then((json) => this.aspects = json).catch((error) => console.error(error));
             fetch('./itemtypes.json').then((response) => response.json())
                 .then((json) => this.itemTypes = json).catch((error) => console.error(error));
             fetch('./uniques.json').then((response) => response.json())
@@ -61,14 +54,6 @@ document.addEventListener('alpine:init', () => {
                 })
             );
         },
-        searchListAspects() {
-            return Object.fromEntries(
-                Object.entries(this.aspects).filter(([key, value]) => {
-                    return value.desc.toLowerCase().includes(this.searchTextAspects.toLowerCase())
-                        || key.toLowerCase().includes(this.searchTextAspects.toLowerCase());
-                })
-            );
-        },
         searchListUniques() {
             return Object.fromEntries(
                 Object.entries(this.uniques).filter(([key, value]) => {
@@ -82,14 +67,12 @@ document.addEventListener('alpine:init', () => {
         },
         resetTextSearch() {
             this.searchTextAffixes = '';
-            this.searchTextAspects = '';
             this.searchTextUniques = '';
         },
         newBuild() {
             return {
                 id: new Date().getTime(),
                 name : 'My Build ' + (this.myList.length + 1),
-                aspects : [],
                 affixes : [],
                 uniques : []
             }
@@ -181,13 +164,6 @@ document.addEventListener('alpine:init', () => {
         },
         contentFile() {
             let content = '';
-            if (this.myList[this.activeBuild].aspects.length) {
-                content = "Aspects:\n";
-                for (const item of this.myList[this.activeBuild].aspects) {
-                    content += "  - [" + item.aspect + (item.value ? ', ' + item.value : '') + "]\n";
-                }
-                content += "\n";
-            }
             if (this.myList[this.activeBuild].affixes.length) {
                 content += "Affixes:\n";
                 for (const item of this.myList[this.activeBuild].affixes) {
@@ -251,18 +227,6 @@ document.addEventListener('alpine:init', () => {
         copyContentFile() {
             navigator.clipboard.writeText(this.contentFile());
         },
-        addAspect(){
-            this.myList[this.activeBuild].aspects.push({
-                id : new Date().getTime(),
-                aspect: '',
-                value: ''
-            });
-        },
-        removeAspect(key) {
-            this.myList[this.activeBuild].aspects.splice(key, 1);
-            this.saveList();
-        },
-
         addUnique() {
             this.myList[this.activeBuild].uniques.push({
                 id : new Date().getTime(),
