@@ -2,31 +2,29 @@ document.addEventListener('alpine:init', () => {
     Alpine.data('d4data', () => ({
         itemTypes : {},
         affixes : {},
-        aspects : {},
         uniques : {},
         showAffixes : true,
-        showAspects : true,
         showContentFile : false,
         showUniques : true,
         activeBuild : 0,
-        activeItemTypeDropdown : -1,
-        activeAffixDropdown : -1,
-        activeAspectDropdown : -1,
-        activeUniqueDropdown : -1,
-        searchTextAspects : '',
+        currentObjForDropdown : null,
         searchTextAffixes : '',
         searchTextUniques : '',
         toastMessage : '',
+        dropdownAffix : null,
+        dropdownItemTypes : null,
+        dropdownUniques : null,
         myList : [],
         init() {
             this.fetchFiles();
             this.myList = this.getMyList();
+            this.dropdownAffix = document.getElementById('dropdownAffix');
+            this.dropdownItemTypes = document.getElementById('dropdownItemTypes');
+            this.dropdownUniques = document.getElementById('dropdownUniques');
         },
         fetchFiles() {
             fetch('./affixes.json').then((response) => response.json())
                 .then((json) => this.affixes = json).catch((error) => console.error(error));
-            fetch('./aspects.json').then((response) => response.json())
-                .then((json) => this.aspects = json).catch((error) => console.error(error));
             fetch('./itemtypes.json').then((response) => response.json())
                 .then((json) => this.itemTypes = json).catch((error) => console.error(error));
             fetch('./uniques.json').then((response) => response.json())
@@ -56,14 +54,6 @@ document.addEventListener('alpine:init', () => {
                 })
             );
         },
-        searchListAspects() {
-            return Object.fromEntries(
-                Object.entries(this.aspects).filter(([key, value]) => {
-                    return value.desc.toLowerCase().includes(this.searchTextAspects.toLowerCase())
-                        || key.toLowerCase().includes(this.searchTextAspects.toLowerCase());
-                })
-            );
-        },
         searchListUniques() {
             return Object.fromEntries(
                 Object.entries(this.uniques).filter(([key, value]) => {
@@ -73,22 +63,16 @@ document.addEventListener('alpine:init', () => {
             );
         },
         resetDropdowns() {
-            this.activeItemTypeDropdown = -1;
-            this.activeAffixDropdown = -1;
-            this.activeAspectDropdown = -1;
-            this.activeUniqueDropdown = -1;
             this.resetTextSearch();
         },
         resetTextSearch() {
             this.searchTextAffixes = '';
-            this.searchTextAspects = '';
             this.searchTextUniques = '';
         },
         newBuild() {
             return {
                 id: new Date().getTime(),
                 name : 'My Build ' + (this.myList.length + 1),
-                aspects : [],
                 affixes : [],
                 uniques : []
             }
@@ -119,21 +103,23 @@ document.addEventListener('alpine:init', () => {
             this.saveList();
             this.toggleValidatingBtn($el);
         },
-        showDropdown(key, dropdownType) {
+        showDropdown(obj, dropdown) {
             if (this.$event.target.classList.contains('remove')) {
                 return;
             }
-            this[dropdownType] = key;
+            this.currentObjForDropdown = obj;
+            this.$event.target.parentElement.appendChild(dropdown);
+
             this.$el.dataset['bsToggle'] = 'dropdown';
             this.$nextTick(() => {
+
                 let dropdown = bootstrap.Dropdown.getOrCreateInstance(this.$el, {
                     autoClose : this.$el.dataset['dropdownClose'] ?? 'outside'
                 }),
-                    $this = this;
+                $this = this;
                 dropdown.show();
                 this.$el.parentElement.querySelector('.dropdown-menu input')?.focus();
                 function removeEventListener() {
-                    $this[dropdownType] = -1;
                     dropdown.dispose();
                     delete $this.$el.dataset['bsToggle'];
                     $this.resetTextSearch();
@@ -178,13 +164,6 @@ document.addEventListener('alpine:init', () => {
         },
         contentFile() {
             let content = '';
-            if (this.myList[this.activeBuild].aspects.length) {
-                content = "Aspects:\n";
-                for (const item of this.myList[this.activeBuild].aspects) {
-                    content += "  - [" + item.aspect + (item.value ? ', ' + item.value : '') + "]\n";
-                }
-                content += "\n";
-            }
             if (this.myList[this.activeBuild].affixes.length) {
                 content += "Affixes:\n";
                 for (const item of this.myList[this.activeBuild].affixes) {
@@ -192,10 +171,11 @@ document.addEventListener('alpine:init', () => {
                     content += "      itemType: [" + item.itemType.join(', ') + "]\n";
                     content += "      minPower: " + item.minPower + "\n";
                     content += "      affixPool:\n";
+                    content += "        - count:\n";
                     for (const affix of item.affixPools) {
-                        content += "        " + this.renderAffix(affix);
+                        content += "          " + this.renderAffix(affix);
                     }
-                    content += "      minAffixCount: " + item.minAffixCount + "\n";
+                    content += "          minCount: " + item.minAffixCount + "\n";
                     content += "\n";
                 }
             }
@@ -247,18 +227,6 @@ document.addEventListener('alpine:init', () => {
         copyContentFile() {
             navigator.clipboard.writeText(this.contentFile());
         },
-        addAspect(){
-            this.myList[this.activeBuild].aspects.push({
-                id : new Date().getTime(),
-                aspect: '',
-                value: ''
-            });
-        },
-        removeAspect(key) {
-            this.myList[this.activeBuild].aspects.splice(key, 1);
-            this.saveList();
-        },
-
         addUnique() {
             this.myList[this.activeBuild].uniques.push({
                 id : new Date().getTime(),
