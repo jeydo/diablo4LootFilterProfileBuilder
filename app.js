@@ -14,6 +14,7 @@ document.addEventListener('alpine:init', () => {
         dropdownAffix : null,
         dropdownItemTypes : null,
         dropdownUniques : null,
+        scraping : false,
         myList : [],
         init() {
             this.fetchFiles();
@@ -133,7 +134,7 @@ document.addEventListener('alpine:init', () => {
                 id: new Date().getTime(),
                 name : '',
                 itemType : [],
-                minPower : 780,
+                minPower : 725,
                 affixPools : [],
                 minAffixCount : 3
             }
@@ -215,8 +216,7 @@ document.addEventListener('alpine:init', () => {
                 if (Array.isArray(data)) {
                     this.myList = data;
                     this.saveList();
-                    const modal = bootstrap.Modal.getOrCreateInstance(this.$refs.modal);
-                    modal.hide();
+                    this.closeModal(this.$refs.modal);
                     this.$refs.importContent.value = '';
                     this.showToast('Builds imported');
                 }
@@ -232,9 +232,45 @@ document.addEventListener('alpine:init', () => {
                 id : new Date().getTime(),
                 unique: '',
                 value: '',
-                minPower : 850,
+                minPower : 725,
                 affixPools: []
             });
+        },
+        scrapeBuild() {
+            this.scraping = true;
+            fetch(
+                'http://localhost:3000/scrapebuild',
+                {
+                    method:'POST',
+                    headers: {
+                      "Content-Type": "application/json",
+                      "Accept": "application/json"
+                    },
+                    body: JSON.stringify({ url : this.$refs.scrapeBuild.value })
+                }).then(response => {
+                    if (response.ok)
+                        return response.json()
+                    throw response
+                }).then(json => {
+                    this.myList.push(json);
+                    this.saveList();
+                    this.closeModal(this.$refs.modalScrape);
+                    this.$refs.scrapeBuild.value = '';
+                    this.changeBuild(this.myList.length - 1);
+                    this.showToast('Build added !');
+                    this.scraping = false;
+                }).catch(error => {
+                    if (error instanceof Response) {
+                        error.json().then(error => {
+                            alert(error.error)
+                        })
+                    }
+                    this.scraping = false;
+                })
+        },
+        closeModal(ref) {
+            const modal = bootstrap.Modal.getOrCreateInstance(ref);
+            modal.hide();
         }
     }));
 });
