@@ -239,7 +239,7 @@ document.addEventListener('alpine:init', () => {
         scrapeBuild() {
             this.scraping = true;
             fetch(
-                'http://localhost:3000/scrapebuild',
+                'https://api.diablo4lootfilter.jeydo.dev/scrapebuild',
                 {
                     method:'POST',
                     headers: {
