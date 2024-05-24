@@ -174,7 +174,7 @@ document.addEventListener('alpine:init', () => {
                     content += "      affixPool:\n";
                     content += "        - count:\n";
                     for (const affix of item.affixPools) {
-                        content += "          " + this.renderAffix(affix);
+                        content += "            " + this.renderAffix(affix);
                     }
                     content += "          minCount: " + item.minAffixCount + "\n";
                     content += "\n";
