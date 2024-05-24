@@ -136,7 +136,10 @@
                                 </div>
                             </div>
                             <div class="mb-1">
-                                <input type="number" class="form-control form-control-sm border-info-subtle" x-model="item.minPower" placeholder="Min Power" @change="saveList">
+                                <input type="number" title="minPower" class="form-control form-control-sm border-info-subtle" x-model="item.minPower" placeholder="Min Power" @change="saveList">
+                            </div>
+                            <div class="mb-1">
+                                <input title="minGreaterAffixCount" type="number" class="form-control form-control-sm border-info-subtle" x-model="item.minGreaterAffixCount" placeholder="minGreaterAffixCount" @change="saveList">
                             </div>
                             <div class="text-end mb-1">
                                 <button class="btn btn-info btn-sm" @click="addAffix(key, 'affixes')">Add Affix</button>
@@ -152,7 +155,7 @@
                             </template>
 
                             <div class="mb-1">
-                                <input type="number" class="form-control form-control-sm border-info-subtle" placeholder="Minimum affix" x-model="item.minAffixCount">
+                                <input type="number" class="form-control form-control-sm border-info-subtle" placeholder="Minimum affix" x-model="item.minAffixCount" title="minAffixCount">
                             </div>
                             <div class="mb-1">
                                 <button class="btn btn-info btn-danger btn-sm" @click="removeItem(key, 'affixes')">

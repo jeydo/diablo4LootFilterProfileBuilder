@@ -136,7 +136,8 @@ document.addEventListener('alpine:init', () => {
                 itemType : [],
                 minPower : 725,
                 affixPools : [],
-                minAffixCount : 3
+                minAffixCount : 2,
+                minGreaterAffixCount : null
             }
         },
         changeBuild(key) {
@@ -177,6 +178,9 @@ document.addEventListener('alpine:init', () => {
                         content += "            " + this.renderAffix(affix);
                     }
                     content += "          minCount: " + item.minAffixCount + "\n";
+                    if (item.minGreaterAffixCount > 0) {
+                        content += "          minGreaterAffixCount: " + item.minGreaterAffixCount + "\n";
+                    }
                     content += "\n";
                 }
             }
