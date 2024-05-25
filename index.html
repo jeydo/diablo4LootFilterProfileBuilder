@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
     <title>Diablo4 Loot Filter File Builder</title>
@@ -45,6 +45,20 @@
     <div id="app" x-data="d4data" class="container-xxl">
         <h1>Diablo4 Loot Filter File Builder</h1>
         <p>Profile builder for <a href="https://github.com/aeon0/d4lf" target="_blank">https://github.com/aeon0/d4lf</a></p>
+        <p class="fst-italic">If you have an issue, you can report it here : <a href="https://github.com/jeydo/diablo4LootFilterProfileBuilder/issues">https://github.com/jeydo/diablo4LootFilterProfileBuilder/issues</a></p>
+        <div class="row justify-content-md-end">
+            <div class="col-1 text-end align-text-bottom"><span class="lh-lg">Theme : </span></div>
+            <div class="col-1">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" x-text="theme"></button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" @click="changeTheme('auto')">Auto</a></li>
+                        <li><a class="dropdown-item" href="#" @click="changeTheme('light')">Light</a></li>
+                        <li><a class="dropdown-item" href="#" @click="changeTheme('dark')">Dark</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
         <hr>
         <div class="row">
             <div class="col">

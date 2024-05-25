@@ -15,6 +15,7 @@ document.addEventListener('alpine:init', () => {
         dropdownItemTypes : null,
         dropdownUniques : null,
         scraping : false,
+        theme : 'auto',
         myList : [],
         init() {
             this.fetchFiles();
@@ -22,6 +23,7 @@ document.addEventListener('alpine:init', () => {
             this.dropdownAffix = document.getElementById('dropdownAffix');
             this.dropdownItemTypes = document.getElementById('dropdownItemTypes');
             this.dropdownUniques = document.getElementById('dropdownUniques');
+            this.changeTheme(localStorage.getItem('theme') ?? 'auto');
         },
         fetchFiles() {
             fetch('./affixes.json').then((response) => response.json())
@@ -284,6 +286,14 @@ document.addEventListener('alpine:init', () => {
         closeModal(ref) {
             const modal = bootstrap.Modal.getOrCreateInstance(ref);
             modal.hide();
+        },
+        changeTheme(theme) {
+            this.theme = theme;
+            if (theme === 'auto') {
+                theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+            }
+            document.documentElement.setAttribute('data-bs-theme', theme);
+            localStorage.setItem('theme', this.theme);
         }
     }));
 });
