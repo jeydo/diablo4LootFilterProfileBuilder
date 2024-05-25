@@ -200,7 +200,7 @@ document.addEventListener('alpine:init', () => {
                     content += "  - aspect: [" + item.unique + (item.value ? ', ' + item.value : '') + "]\n";
                     content += "    minPower: " + item.minPower + "\n";
                     if (item.affixPools.length) {
-                        content += "    affixPools:\n";
+                        content += "    affix:\n";
                         for (const affix of item.affixPools) {
                             content += "      " + this.renderAffix(affix);
                         }
