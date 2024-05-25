@@ -91,13 +91,14 @@
         </div>
         <hr>
         <div class="row">
-            <div class="col-10">
+            <div class="col-8">
                 <h4>Content File :
                     <button type="button" class="btn btn-sm btn-outline-secondary" @click="showContentFile = !showContentFile" x-text="showContentFile ? '⏫' : '⏬'"></button>
                 </h4>
             </div>
-            <div class="col-2 text-end">
+            <div class="col-4 text-end">
                 <button type="button" class="btn btn-info" @click="copyContentFile()">Copy content file</button>
+                <button type="button" class="btn btn-info" @click="downloadFile()">Download file</button>
             </div>
         </div>
         <div>

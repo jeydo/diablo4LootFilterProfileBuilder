@@ -105,7 +105,7 @@ document.addEventListener('alpine:init', () => {
             this.toggleValidatingBtn($el);
         },
         showDropdown(obj, dropdown) {
-            if (this.$event.target.classList.contains('remove')) {
+            if (this.$event.target.classList.contains('remove') || this.$event.target.classList.contains('dropdown-item')) {
                 return;
             }
             this.currentObjForDropdown = obj;
@@ -163,6 +163,15 @@ document.addEventListener('alpine:init', () => {
         removeAffix(key, affixKey, pool) {
             this.myList[this.activeBuild][pool][key].affixPools.splice(affixKey, 1);
             this.saveList();
+        },
+        downloadFile() {
+            let blob = new Blob([this.contentFile()], {type: 'text/plain'}),
+                url = window.URL.createObjectURL(blob),
+                a = document.createElement('a');
+            a.href = url;
+            a.download = this.myList[this.activeBuild].name + '.yaml';
+            a.click();
+            window.URL.revokeObjectURL(url);
         },
         contentFile() {
             let content = '';
