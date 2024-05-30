@@ -135,7 +135,7 @@
                     <div class="col-xl-4 col-md-6">
                         <div class="border border-primary-subtle p-2 rounded h-100">
                             <div class="mb-1">
-                                <input type="text" x-model="item.name" class="form-control form-control-sm border-info-subtle" placeholder="Name" @keyup="saveList" required pattern="[A-Za-z0-9 ]{1,}">
+                                <input type="text" x-model="item.name" class="form-control form-control-sm border-info-subtle" placeholder="Name" @keyup="saveList" required pattern="[A-Za-z0-9 -]{1,}">
                             </div>
                             <div class="mb-1">
                                 <div class="border border-primary-subtle p-1 rounded pointer" @click="showDropdown(item, dropdownItemTypes)" @keydown.space.prevent="showDropdown(item, dropdownItemTypes)" tabindex="0">
