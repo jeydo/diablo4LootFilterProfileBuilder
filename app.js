@@ -207,6 +207,9 @@ document.addEventListener('alpine:init', () => {
                             content += "      " + this.renderAffix(affix);
                         }
                     }
+                    if (item.minGreaterAffixCount > 0) {
+                        content += "    minGreaterAffixCount: " + item.minGreaterAffixCount + "\n";
+                    }
                     content += "\n";
                 }
             }
@@ -247,8 +250,9 @@ document.addEventListener('alpine:init', () => {
                 id : new Date().getTime(),
                 unique: '',
                 value: '',
-                minPower : 725,
-                affixPools: []
+                minPower : 925,
+                affixPools: [],
+                minGreaterAffixCount : null
             });
         },
         scrapeBuild() {
